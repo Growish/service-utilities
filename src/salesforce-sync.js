@@ -21,8 +21,10 @@ module.exports.mongoosePlugin = (schema, options = {}) => {
 
         try {
 
-            if(!isInit)
-                return logger.error('Salesforce sync needs to be initialized!', { tagLabel });
+            if(!isInit) {
+                logger.error('Salesforce sync needs to be initialized!', {tagLabel});
+                return next();
+            }
 
             if (!realTimeSyncActive)
                 return next();
