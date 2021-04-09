@@ -44,13 +44,13 @@ module.exports.mongoosePlugin = (schema, options = {}) => {
     });
 
 
-    schema.methods.pushToSalesforce = function () {
+    schema.methods.pushToSalesforce = function (force = false) {
 
         if(!isInit)
             return logger.error('Salesforce sync needs to be initialized!', { tagLabel });
 
 
-        if(!realTimeSyncActive)
+        if(!realTimeSyncActive && !force)
             return false;
         
         pushFn({ assetId: this._id, assetClass: options.assetClass, hook: 'direct' });
