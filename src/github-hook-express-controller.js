@@ -41,6 +41,7 @@ const controller = async (req, res) => {
         return res.send("KO");
     }
 
+    res.send("OK");
 
     try {
 
