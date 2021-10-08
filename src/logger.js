@@ -6,6 +6,22 @@ const chalk                                 = require('chalk');
 
 require('winston-daily-rotate-file');
 
+function censor(censor) {
+    let i = 0;
+
+    return function(key, value) {
+        if(i !== 0 && typeof(censor) === 'object' && typeof(value) == 'object' && censor == value)
+            return '[Circular]';
+
+        if(i >= 29)
+            return '[Unknown]';
+
+        ++i;
+
+        return value;
+    }
+}
+
 const extractRelevant = (info) => {
 
     if(typeof info !== 'object')
@@ -31,7 +47,7 @@ const extractRelevant = (info) => {
     if(Object.keys(obj).length === 0)
         return "";
 
-    return JSON.stringify(obj);
+    return JSON.stringify(obj, censor(obj));
 };
 
 const cFormat = printf(info => {
