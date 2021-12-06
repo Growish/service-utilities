@@ -15,7 +15,7 @@ const init = (_env, _SLACK_BOT_HOOK) => {
     isInit = true;
 };
 
-const send = function (text, attachment, level = 'low', channel = 'slack') {
+const send = function (text, attachment, level = 'low', overrideChannel) {
 
     if(!isInit)
         return logger.error('Notifier needs to be initialized!', { tagLabel });
@@ -34,6 +34,9 @@ const send = function (text, attachment, level = 'low', channel = 'slack') {
             color: level === 'low' ? '#7CD197' : level === 'medium' ? '#d1b42a' : '#d1401c'
         }];
     }
+
+    if(overrideChannel)
+        payload.channel = overrideChannel;
 
     axios
         .post(SLACK_BOT_HOOK, payload).then(() => {
