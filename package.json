@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^3.0.0",
-    "axios": "^0.20.0",
+    "axios": "^0.21.2",
     "chalk": "^4.1.0",
     "path": "^0.12.7",
     "simple-git": "^2.20.1",
