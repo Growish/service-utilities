@@ -10,17 +10,57 @@ module.exports.init = _app => {
 
 };
 
-module.exports.setController = (controllerName, route, method, fn, middlewares = []) => {
+module.exports.Service = class Service {
 
-    const ctrl = async function(req, res) {
-        try {
-            logger.debug('Running...', { tagLabel: controllerName });
-            await fn(req, res);
-        } catch (error) {
-            res.apiErrorResponse(error, controllerName);
-        }
-    };
+    constructor(name) {
+        this.name = name;
+        this.method = 'get';
+        this.middlewares = [];
+    }
 
-    return app[method](route, ...middlewares, ctrl);
+    isGet() {
+        this.method = 'get';
+        return this;
+    }
+
+    isPost() {
+        this.method = 'post';
+        return this;
+    }
+
+    isPut() {
+        this.method = 'put';
+        return this;
+    }
+
+    isDelete() {
+        this.method = 'delete';
+        return this;
+    }
+
+    respondsAt(route) {
+        this.route = route;
+        return this;
+    }
+
+    setMiddlewares(m) {
+        this.middlewares = m;
+        return this;
+    }
+
+    controller(fn) {
+
+        const ctrl = async function(req, res) {
+            try {
+                logger.debug('Running...', { tagLabel: this.name });
+                await fn(req, res);
+            } catch (error) {
+                res.apiErrorResponse(error, this.name);
+            }
+        };
+
+        return app[this.method](this.route, ...this.middlewares, ctrl);
+
+    }
 
 };
