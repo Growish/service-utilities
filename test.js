@@ -1,6 +1,10 @@
-const logger = require('./src/logger');
+const utilities = require('./src');
 
 
-logger.info("Info message!", { foo: 123 });
-logger.debug("Debug message!", { foo: 123 });
-logger.error("Debug message!", { error: new Error('Some error payload!') });
+utilities.logger.info("Info message!", { foo: 123 });
+utilities.logger.debug("Debug message!", { foo: 123 });
+utilities.logger.error("Debug message!", { error: new Error('Some error payload!') });
+
+utilities.serviceInjector.register('example', function () { console.log("Hello from example!", arguments)});
+
+utilities.serviceInjector.get('example')("foo", "bar");
