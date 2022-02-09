@@ -50,12 +50,14 @@ module.exports.Service = class Service {
 
     controller(fn) {
 
+        const me = this;
+
         const ctrl = async function(req, res) {
             try {
-                logger.debug('Running...', { tagLabel: this.name });
+                logger.debug('Running...', { tagLabel: me.name });
                 await fn(req, res);
             } catch (error) {
-                res.apiErrorResponse(error, this.name);
+                res.apiErrorResponse(error, me.name);
             }
         };
 
