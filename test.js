@@ -5,9 +5,9 @@ utilities.logger.info("Info message!", { foo: 123 });
 utilities.logger.debug("Debug message!", { foo: 123 });
 utilities.logger.error("Debug message!", { error: new Error('Some error payload!') });
 
-utilities.serviceInjector.register('example', function () { console.log("Hello from example!", arguments)});
+utilities.dependencyLocator.register('example', function () { console.log("Hello from example!", arguments)});
 
-utilities.serviceInjector.get('example')("foo", "bar");
+utilities.dependencyLocator.get('example')("foo", "bar");
 
 utilities.express.init({ use: function() { console.log("app use", arguments)}, post: ()=>{} });
 

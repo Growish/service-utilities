@@ -6,5 +6,5 @@ module.exports = {
     mongooseErrorFormatterPlugin: require('./mongoose-error-formatter-plugin'),
     salesforce: require('./salesforce-sync'),
     express: require('./express'),
-    serviceInjector: require('./service-injector')
+    dependencyLocator: require('./dependency-locator')
 };
