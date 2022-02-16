@@ -13,6 +13,7 @@ utilities.express.init({ use: function() { console.log("app use", arguments)}, p
 
 console.log(new utilities.express.Service('foo')
     .isPost()
+    .isPublic()
     .respondsAt('/test')
     .setMiddlewares([()=>{}])
     .controller(async (req, res) => {}));

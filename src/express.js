@@ -2,10 +2,12 @@ const apiMiddleware = require('./api-middleware');
 const logger = require('./logger');
 
 let app;
+let authMiddleware;
 
-module.exports.init = _app => {
+module.exports.init = (_app, _authMiddleware = null) => {
 
     app = _app;
+    authMiddleware = _authMiddleware;
     app.use(apiMiddleware);
 
 };
@@ -16,6 +18,7 @@ module.exports.Service = class Service {
         this.name = name;
         this.method = 'get';
         this.middlewares = [];
+        this.public = false;
     }
 
     isGet() {
@@ -35,6 +38,11 @@ module.exports.Service = class Service {
 
     isDelete() {
         this.method = 'delete';
+        return this;
+    }
+
+    isPublic() {
+        this.public = true;
         return this;
     }
 
@@ -61,7 +69,10 @@ module.exports.Service = class Service {
             }
         };
 
-        return app[this.method](this.route, ...this.middlewares, ctrl);
+        if(typeof authMiddleware === 'function' && !this.public)
+            return app[this.method](this.route, authMiddleware, ...this.middlewares, ctrl);
+        else
+            return app[this.method](this.route, ...this.middlewares, ctrl);
 
     }
 
