@@ -1,3 +1,5 @@
+const logger = require('./logger');
+
 function convertToCSV(arr) {
     const array = [Object.keys(arr[0])].concat(arr);
 
@@ -89,7 +91,7 @@ module.exports = (req, res, next) => {
         if (error && error.name === 'ConflictError')
             return getForm(409, { reason: error.reason });
 
-        utilities.logger.error("Controller crash", { tagLabel: ctrlName, error });
+        logger.error("Controller crash", { tagLabel: ctrlName, error });
         return getForm(500, null, null);
 
     };

@@ -1,0 +1,11 @@
+{
+  "any.required": "{{label}} è obbligatorio",
+  "string.min": "{{label}} deve essere lungo almeno {{limit}} caratteri",
+  "string.max": "{{label}} deve essere di massimo {{limit}} caratteri",
+  "number.min": "{{label}} deve essere minimo {{limit}}",
+  "number.max": "{{label}} deve essere massimo {{limit}}",
+  "boolean.base": "{{label}} deve essere di tipo booleano",
+  "object.unknown": "{{label}} non è ammesso",
+  "date.base": "{{label}} non è una data valida",
+  "date.format": "{{label}} non ha un formato valido (atteso: {{format}})"
+}
