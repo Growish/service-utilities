@@ -44,17 +44,27 @@ module.exports.mongoosePlugin = (schema, options = {}) => {
     });
 
 
-    schema.methods.pushToSalesforce = function (force = false) {
+    schema.methods.pushToSalesforce = async function (force = false) {
 
-        if(!isInit)
-            return logger.error('Salesforce sync needs to be initialized!', { tagLabel });
-
+        if(!isInit) {
+            logger.error('Salesforce sync needs to be initialized!', {tagLabel});
+            return false;
+        }
 
         if(!realTimeSyncActive && !force)
             return false;
-        
-        pushFn({ assetId: this._id, assetClass: options.assetClass, hook: 'direct' });
-        
+
+        try {
+
+            return await pushFn({assetId: this._id, assetClass: options.assetClass, hook: 'direct'});
+
+        }
+        catch (error) {
+
+            logger.error('Push function failed', { tagLabel, error });
+            return false;
+
+        }
     }
 
 };
