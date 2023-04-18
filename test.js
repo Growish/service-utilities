@@ -23,6 +23,7 @@ const dummyUser = {
     mfaSecret: undefined
 };
 
+/*
 new utilities.express.Service('fooCTRL')
     .isPost()
     .isPublic()
@@ -49,5 +50,14 @@ new utilities.express.Service('fooCTRL')
 
 
     });
+*/
 
+
+setInterval(()=>{
+    utilities.state.increment('foo');
+}, 5000);
+
+setInterval(()=>{
+    console.log(utilities.state.get('foo'));
+}, 6000);
 app.listen(3080, () => console.log("Server ready!"));

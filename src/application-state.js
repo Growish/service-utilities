@@ -1,6 +1,6 @@
 const fs        = require('fs');
-const appRoot   = require('app-root-path').path;
 const path      = require('path');
+const chokidar  = require('chokidar');
 
 class ApplicationState {
 
@@ -14,12 +14,12 @@ class ApplicationState {
             fs.writeFileSync(this.fileLocation, JSON.stringify({}));
         }
         else {
-            try {
-                this.data = JSON.parse(fs.readFileSync(this.fileLocation));
-            }
-            catch (e) {}
-
+            this.load();
         }
+
+        chokidar.watch(this.fileLocation).on('change', (event, path) => {
+            this.load();
+        });
 
     }
 
@@ -63,6 +63,13 @@ class ApplicationState {
     save() {
         fs.writeFileSync(this.fileLocation, JSON.stringify(this.data, null, 2));
         return true;
+    }
+
+    load() {
+        try {
+            this.data = JSON.parse(fs.readFileSync(this.fileLocation));
+        }
+        catch (e) {}
     }
 
 }
