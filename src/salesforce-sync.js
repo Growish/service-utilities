@@ -84,7 +84,7 @@ module.exports.mongoosePlugin = (schema, options = {}) => {
         }
         catch (error) {
 
-            logger.error('Push function failed', { tagLabel, error });
+            logger.error('delete function failed', { tagLabel, error });
             return false;
 
         }
