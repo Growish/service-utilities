@@ -5,14 +5,16 @@ const tagLabel = 'salesforceSync'
 let pushFn;
 let deleteFn;
 let realTimeSyncActive;
+let addSalesforceFieldIntoSchema;
 
 let isInit = false;
 
-module.exports.init = (_realTimeSyncActive, _pushFn = () => {}, _deleteFn = () => {}) => {
+module.exports.init = (_realTimeSyncActive, _pushFn = () => {}, _deleteFn = () => {}, _addSalesforceFieldIntoSchema = false) => {
 
     pushFn = _pushFn;
     deleteFn = _deleteFn;
     realTimeSyncActive = _realTimeSyncActive;
+    addSalesforceFieldIntoSchema = _addSalesforceFieldIntoSchema;
     isInit = true;
 
 }
@@ -161,5 +163,21 @@ module.exports.mongoosePlugin = (schema, options = {}) => {
         next();
 
     });
+
+    if(addSalesforceFieldIntoSchema){
+        addSalesforceFieldIntoSchema = schema.add({
+            salesforce: {
+                sync: {
+                    type: Boolean,
+                    enum: [false, true],
+                    default: false
+                },
+                lastSyncAt: {
+                    type: Date
+                }
+
+            }
+        });
+    }
 
 };
