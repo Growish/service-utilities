@@ -39,8 +39,6 @@ const stringToJoi = _expression => {
         if(joiSchema[paramComponents[0]] === undefined || joiSchema[paramComponents[0]] === null)
             throw new Error("Invalid parameter: " + paramComponents[0]);
 
-
-
         if(paramComponents[1]) {
             const castedParamComponent = isNaN(paramComponents[1]) ? paramComponents[1] : parseInt(paramComponents[1]);
             joiSchema = joiSchema[paramComponents[0]](castedParamComponent);
@@ -72,7 +70,6 @@ const objectToJoi = obj => {
     }
 
     return Joi.object(joiSchema);
-
 
 };
 

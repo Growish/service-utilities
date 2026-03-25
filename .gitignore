@@ -1,5 +1,15 @@
 .idea
-node_modules
-logs
 application-state.json
+/logs/
+/node_modules/
+/.npmrc
+/package-lock.json
+/.env
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/.gitignore
+/.idea/modules.xml
+/.idea/php.xml
+/.idea/stantup-api.iml
+/.idea/vcs.xml
 .DS_Store
+.vscode/
