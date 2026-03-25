@@ -174,8 +174,10 @@ module.exports.mongoosePlugin = (schema, options = {}) => {
                 },
                 lastSyncAt: {
                     type: Date
+                },
+                lastHash: {
+                    type: String
                 }
-
             }
         });
     }
