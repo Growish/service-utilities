@@ -14,7 +14,6 @@ const errorManager = (err, next) => {
 
 module.exports = (schema) => {
 
-
     schema.post('validate', function(error, doc, next) {
         errorManager(error, next);
     });

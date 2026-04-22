@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const github = require('simple-git')();
-const {exec} = require('child_process');
+const { exec } = require('child_process');
 
 const logger = require('./logger');
 const state = require('./application-state');
@@ -44,7 +44,6 @@ const controller = async (req, res) => {
     res.send("OK");
 
     try {
-
 
         logger.debug('Fetching repo', {tagLabel});
         await github.fetch(['--all']);
