@@ -9,6 +9,9 @@ require('winston-daily-rotate-file');
 
 const loggerMode                       = (process.env.LOGGER_MODE || 'legacy').toLowerCase();
 const isCloudMode                      = loggerMode === 'cloud';
+const serviceName                      = process.env.APP_NAME || process.env.SERVICE_NAME || null;
+const serviceEnv                       = process.env.ENVIRONMENT || process.env.ENV || null;
+const serviceVersion                   = process.env.APP_VERSION || "0.0.1";
 
 const parseBoolean = (value, defaultValue) => {
     if(value === undefined)
@@ -94,6 +97,35 @@ const extractRelevantObject = (info) => {
     return obj;
 };
 
+const buildCloudLog = (info, extra) => {
+    const payload = extractRelevantObject(info);
+    const error = payload.error;
+
+    if(error !== undefined)
+        delete payload.error;
+
+    const log = {
+        timestamp: info.timestamp,
+        level: info.level,
+        service: serviceName,
+        env: serviceEnv,
+        version: serviceVersion,
+        process: process.title,
+        pid: process.pid,
+        tagLabel: info.tagLabel || null,
+        message: info.message,
+        ...extra
+    };
+
+    if(Object.keys(payload).length > 0)
+        log.payload = payload;
+
+    if(error !== undefined)
+        log.error = error;
+
+    return log;
+};
+
 const cFormat = printf(info => {
 
     let level = (info.level === 'debug') ?
@@ -118,11 +150,11 @@ const fFormat = printf(info => {
 });
 
 const jsonConsoleFormat = printf(info => {
-    return JSON.stringify({ process: process.title, pid: process.pid, level: info.level, tagLabel: info.tagLabel || null, timestamp: info.timestamp, message: info.message, payload: extractRelevantObject(info) }, censor(info));
+    return JSON.stringify(buildCloudLog(info), censor(info));
 });
 
 const httpFormat = printf(info => {
-    return JSON.stringify({ process: process.title, pid: process.pid, level: info.level, timestamp: info.timestamp, type: 'http', message: String(info.message || '').trim() });
+    return JSON.stringify(buildCloudLog(info, { type: 'http', message: String(info.message || '').trim() }), censor(info));
 });
 
 const options = {
@@ -166,6 +198,7 @@ const options = {
         level: 'debug',
         handleExceptions: true,
         json: false,
+        stderrLevels: ['error'],
         format: combine( timestamp(), format.splat(), format.simple(), consoleJsonEnabled ? jsonConsoleFormat : cFormat )
     },
 
@@ -173,6 +206,7 @@ const options = {
         level: 'info',
         handleExceptions: true,
         json: consoleJsonEnabled,
+        stderrLevels: ['error'],
         format: combine( timestamp(), consoleJsonEnabled ? httpFormat : format.simple() )
     }
 };
@@ -214,7 +248,10 @@ logger.config = {
     mode: loggerMode,
     fileEnabled,
     consoleEnabled,
-    consoleJsonEnabled
+    consoleJsonEnabled,
+    serviceName,
+    serviceEnv,
+    serviceVersion
 };
 
 module.exports = logger;

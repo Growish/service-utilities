@@ -203,6 +203,11 @@ Variabili opzionali:
 - `LOGGER_FILE_ENABLED=false` disabilita i file log anche in modalità legacy
 - `LOGGER_CONSOLE_ENABLED=false` disabilita la console
 - `LOGGER_CONSOLE_JSON=true` forza il formato JSON in console
+- `APP_NAME=my-api` valorizza il campo `service` nei log JSON
+- `ENVIRONMENT=production` oppure `ENV=production` valorizza il campo `env`
+- `APP_VERSION=1.2.3` valorizza il campo `version`
+
+In modalità cloud gli errori vengono inviati su stderr, gli altri log su stdout.
 
 Test locale rapido:
 - `node test.js` prova il logger in modalità legacy
