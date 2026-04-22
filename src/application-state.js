@@ -1,14 +1,12 @@
-const fs        = require('fs');
+const fs = require('fs');
 const path = require('node:path');
 const chokidar  = require('chokidar');
-
 class ApplicationState {
 
     constructor() {
 
         this.data = {};
         this.fileLocation = path.resolve(path.dirname(require.main.filename), 'application-state.json');
-        
         
         if (!fs.existsSync(this.fileLocation)) {
             fs.writeFileSync(this.fileLocation, JSON.stringify({}));
@@ -73,6 +71,5 @@ class ApplicationState {
     }
 
 }
-
 
 module.exports = new ApplicationState();
