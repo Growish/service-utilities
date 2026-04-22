@@ -170,20 +170,46 @@ const inputFields = {
 };
 ```
 
-### `logger` (Winston + rotazione)
+### `logger` (Winston)
 
 `src/logger.js` esporta un logger `winston` con:
-- trasporto su file (rotazione giornaliera) sotto `./logs`:
+- trasporto su file opzionale (rotazione giornaliera) sotto `./logs`:
   - `app-%DATE%.log` (info)
   - `error-%DATE%.log` (error)
   - `http-%DATE%.log` (http requests)
-- console con formattazione colorata
+- console con formattazione colorata oppure JSON
 
 Contiene inoltre:
 - `logger.stream.write(...)` per compatibilità con alcuni middlewares HTTP
 - `logger.genTag(name)` per taggare i log con un suffisso casuale
 
-> La cartella `logs/` è ignorata in `.gitignore` ma deve esistere o essere creabile dal processo.
+Default retrocompatibile:
+
+```bash
+LOGGER_MODE=legacy
+```
+
+In questa modalità il logger scrive sia su file che in console, come nelle versioni precedenti.
+
+Per ambienti cloud / log collector:
+
+```bash
+LOGGER_MODE=cloud
+```
+
+In questa modalità il logger non scrive su disco e manda log JSON su stdout/stderr, lasciando a Docker, al runtime cloud o all'infrastruttura di logging il compito di raccoglierli.
+
+Variabili opzionali:
+- `LOGGER_FILE_ENABLED=false` disabilita i file log anche in modalità legacy
+- `LOGGER_CONSOLE_ENABLED=false` disabilita la console
+- `LOGGER_CONSOLE_JSON=true` forza il formato JSON in console
+
+Test locale rapido:
+- `node test.js` prova il logger in modalità legacy
+- `LOGGER_MODE=cloud node test.js` prova il logger in modalità cloud
+- `node test.js --server` avvia anche il server Express di prova sulla porta `3080`
+
+> Se i file log sono abilitati, la cartella `logs/` è ignorata in `.gitignore` ma deve esistere o essere creabile dal processo.
 
 ### `notifier` (Slack)
 
@@ -313,4 +339,3 @@ Utile per mantenere riferimenti a dipendenze “iniettate” runtime.
 
 - Non c’è una suite di test configurata (`npm test` ritorna errore).
 - Il progetto si concentra su utility modulari: alcuni moduli richiedono integrazioni esterne (Mongoose, Slack, GitHub webhook).
-

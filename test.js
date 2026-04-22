@@ -2,16 +2,27 @@ const express = require('express');
 
 const utilities = require('./src');
 
+const shouldStartServer = process.argv.includes('--server');
+const tagLabel = utilities.logger.genTag('test');
 
-utilities.logger.info("Info message!", {foo: 123});
-utilities.logger.debug("Debug message!", {foo: 123});
-utilities.logger.error("Debug message!", {error: new Error('Some error payload!')});
+console.log("Logger config:", utilities.logger.config);
+
+utilities.logger.info("Info message!", { tagLabel, foo: 123 });
+utilities.logger.debug("Debug message!", { tagLabel, foo: 123 });
+utilities.logger.warn("Warn message!", { tagLabel, enabled: true });
+utilities.logger.error("Error message!", { tagLabel, error: new Error('Some error payload!') });
+utilities.logger.stream.write("GET /health 200 1ms\n");
 
 utilities.dependencyLocator.register('example', function () {
     console.log("Hello from example!", arguments)
 });
 
 utilities.dependencyLocator.get('example')("foo", "bar");
+
+if(!shouldStartServer) {
+    setTimeout(() => process.exit(0), 250);
+    return;
+}
 
 const app = express();
 
@@ -23,7 +34,6 @@ const dummyUser = {
     mfaSecret: undefined
 };
 
-/*
 new utilities.express.Service('fooCTRL')
     .isPost()
     .isPublic()
@@ -50,7 +60,6 @@ new utilities.express.Service('fooCTRL')
 
 
     });
-*/
 
 
 setInterval(()=>{

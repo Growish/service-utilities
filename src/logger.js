@@ -7,6 +7,20 @@ const chalk                                 = chalkModule.default || chalkModule
 
 require('winston-daily-rotate-file');
 
+const loggerMode                       = (process.env.LOGGER_MODE || 'legacy').toLowerCase();
+const isCloudMode                      = loggerMode === 'cloud';
+
+const parseBoolean = (value, defaultValue) => {
+    if(value === undefined)
+        return defaultValue;
+
+    return ['1', 'true', 'yes', 'on'].includes(String(value).toLowerCase());
+};
+
+const fileEnabled                           = parseBoolean(process.env.LOGGER_FILE_ENABLED, !isCloudMode);
+const consoleEnabled                        = parseBoolean(process.env.LOGGER_CONSOLE_ENABLED, true);
+const consoleJsonEnabled                    = parseBoolean(process.env.LOGGER_CONSOLE_JSON, isCloudMode);
+
 function censor(censor) {
     let i = 0;
 
@@ -51,6 +65,35 @@ const extractRelevant = (info) => {
     return JSON.stringify(obj, censor(obj));
 };
 
+const extractRelevantObject = (info) => {
+
+    if(typeof info !== 'object')
+        return info;
+
+    let obj = {};
+
+    for (let key in info) {
+        if (info.hasOwnProperty(key)) {
+            if(key === 'error') {
+
+                if(info[key] instanceof Error) {
+                    obj[key] = {};
+
+                    Object.getOwnPropertyNames(info[key]).forEach((property) => {
+                        obj[key][property] = info[key][property];
+                    });
+                } else
+                    obj[key] = info[key];
+
+            }
+            else if(key !== 'level' && key !== 'message' && key !== 'timestamp' && key !== 'tagLabel')
+                obj[key] = info[key];
+        }
+    }
+
+    return obj;
+};
+
 const cFormat = printf(info => {
 
     let level = (info.level === 'debug') ?
@@ -72,6 +115,14 @@ const cFormat = printf(info => {
 
 const fFormat = printf(info => {
     return JSON.stringify({ process: process.title, pid: process.pid, level: info.level, tagLabel: info.tagLabel || null, timestamp: info.timestamp, message: info.message, payload: extractRelevant(info) });
+});
+
+const jsonConsoleFormat = printf(info => {
+    return JSON.stringify({ process: process.title, pid: process.pid, level: info.level, tagLabel: info.tagLabel || null, timestamp: info.timestamp, message: info.message, payload: extractRelevantObject(info) }, censor(info));
+});
+
+const httpFormat = printf(info => {
+    return JSON.stringify({ process: process.title, pid: process.pid, level: info.level, timestamp: info.timestamp, type: 'http', message: String(info.message || '').trim() });
 });
 
 const options = {
@@ -115,23 +166,38 @@ const options = {
         level: 'debug',
         handleExceptions: true,
         json: false,
-        format: combine( timestamp(), format.splat(), format.simple(), cFormat )
+        format: combine( timestamp(), format.splat(), format.simple(), consoleJsonEnabled ? jsonConsoleFormat : cFormat )
+    },
+
+    consoleHttp: {
+        level: 'info',
+        handleExceptions: true,
+        json: consoleJsonEnabled,
+        format: combine( timestamp(), consoleJsonEnabled ? httpFormat : format.simple() )
     }
 };
 
+const mainTransports = [];
+const httpTransports = [];
+
+if(fileEnabled) {
+    mainTransports.push(new transports.DailyRotateFile(options.fileInfo));
+    mainTransports.push(new transports.DailyRotateFile(options.fileError));
+    httpTransports.push(new transports.DailyRotateFile(options.fileHttp));
+}
+
+if(consoleEnabled) {
+    mainTransports.push(new transports.Console(options.console));
+    httpTransports.push(new transports.Console(options.consoleHttp));
+}
+
 let logger = createLogger({
-    transports: [
-        new transports.DailyRotateFile(options.fileInfo),
-        new transports.DailyRotateFile(options.fileError),
-        new transports.Console(options.console)
-    ],
+    transports: mainTransports,
     exitOnError: false
 });
 
 let expressLogger = createLogger({
-    transports: [
-        new transports.DailyRotateFile(options.fileHttp)
-    ]
+    transports: httpTransports
 });
 
 logger.stream = {
@@ -142,6 +208,13 @@ logger.stream = {
 
 logger.genTag = (name) => {
     return name + ' (' + Math.random().toString(36).substring(8) + ')'
+};
+
+logger.config = {
+    mode: loggerMode,
+    fileEnabled,
+    consoleEnabled,
+    consoleJsonEnabled
 };
 
 module.exports = logger;
