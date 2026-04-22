@@ -53,12 +53,8 @@ new utilities.express.Service('fooCTRL')
         date: 'date:iso'
     })
     .controller(async (req, res, logger) => {
-
         logger.info("Ciao mondo!", { foo: 'bar' });
-
         res.resolve("OK")
-
-
     });
 
 
