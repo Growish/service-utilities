@@ -2,7 +2,8 @@ const appRoot                               = require('app-root-path').path;
 const { createLogger, format, transports }  = require('winston');
 const { combine, timestamp, printf }        = format;
 const process                               = require('process');
-const chalk                                 = require('chalk');
+const chalkModule                           = require('chalk');
+const chalk                                 = chalkModule.default || chalkModule;
 
 require('winston-daily-rotate-file');
 
