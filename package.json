@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "salesforce project",
   "main": "./src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./src/index.js"
@@ -12,8 +15,8 @@
   "dependencies": {
     "app-root-path": "^3.1.0",
     "axios": "^1.15.1",
-    "chalk": "^5.6.2",
-    "chokidar": "^5.0.0",
+    "chalk": "^4.1.0",
+    "chokidar": "^3.5.3",
     "i18n": "^0.15.3",
     "joi": "^18.1.1",
     "nodemon": "^3.1.14",
@@ -22,6 +25,6 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "express": "^5.1.1"
+    "express": "^5.2.1"
   }
 }
