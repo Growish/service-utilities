@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^3.1.0",
-    "axios": "^1.13.6",
+    "axios": "^1.15.1",
     "chalk": "^5.6.2",
     "chokidar": "^5.0.0",
     "i18n": "^0.15.3",
